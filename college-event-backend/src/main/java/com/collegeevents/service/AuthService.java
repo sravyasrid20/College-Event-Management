@@ -51,25 +51,41 @@ public class AuthService {
         Map<String, String> data = new HashMap<>();
         data.put("email", user.getEmail());
         data.put("role", user.getRole().name());
+
         return ApiResponse.success("Registration successful", data);
     }
 
-    public ApiResponse<Map<String, Object>> login(LoginRequest request, HttpServletResponse response) {
+    public ApiResponse<Map<String, Object>> login(
+            LoginRequest request,
+            HttpServletResponse response) {
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(request.getEmail());
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = jwtUtil.generateToken(userDetails, user.getRole().name());
+        String token =
+                jwtUtil.generateToken(userDetails, user.getRole().name());
 
         Cookie cookie = new Cookie("jwt", token);
+
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(86400);
-        cookie.setAttribute("SameSite", "Lax");
+
+        // Required because Vercel frontend and Railway backend
+        // are different sites in production.
+        cookie.setAttribute("SameSite", "None");
+
         response.addCookie(cookie);
 
         Map<String, Object> data = new HashMap<>();
@@ -82,11 +98,20 @@ public class AuthService {
     }
 
     public ApiResponse<Void> logout(HttpServletResponse response) {
+
         Cookie cookie = new Cookie("jwt", null);
+
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
+
+        // Same attributes as the login cookie so the browser
+        // correctly removes the production JWT cookie.
+        cookie.setAttribute("SameSite", "None");
+
         response.addCookie(cookie);
+
         return ApiResponse.success("Logged out successfully");
     }
 }
