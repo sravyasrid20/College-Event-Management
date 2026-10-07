@@ -37,6 +37,7 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/hello").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
                 .requestMatchers("/api/events/pending").hasRole("ADMIN")
                 .requestMatchers("/api/events/*/approve", "/api/events/*/reject").hasRole("ADMIN")
