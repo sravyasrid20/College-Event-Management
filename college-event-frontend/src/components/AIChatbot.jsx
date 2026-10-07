@@ -32,7 +32,7 @@ function AIChatbot() {
 
     try {
       const response = await fetch(`${API_URL}/groq/chat`, {
-  credentials: 'include',
+    credentials: 'include',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

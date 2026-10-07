@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
-import { CalendarDays, Mail, Lock, Loader2 } from 'lucide-react'
+import { CalendarDays, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
   const { login, loading } = useAuth()
   const navigate = useNavigate()
 
@@ -55,6 +57,7 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">
               Email
@@ -73,6 +76,7 @@ const Login = () => {
             </div>
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">
               Password
@@ -82,15 +86,29 @@ const Login = () => {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
 
               <input
-                type="password"
-                className="input-field pl-10"
+                type={showPassword ? 'text' : 'password'}
+                className="input-field pl-10 pr-10"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
           </div>
 
+          {/* Sign In */}
           <button
             type="submit"
             className="btn-primary w-full flex items-center justify-center gap-2 py-3"
