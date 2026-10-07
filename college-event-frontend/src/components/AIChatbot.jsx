@@ -2,6 +2,9 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import './AIChatbot.css'
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:8080/api'
 
 function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,7 +31,7 @@ function AIChatbot() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8080/api/groq/chat', {
+      const response = await fetch(`${API_URL}/groq/chat`, {
   credentials: 'include',
         method: 'POST',
         headers: {
